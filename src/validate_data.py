@@ -140,6 +140,31 @@ def validate_data():
     assert (
         (expected_totals - actual_totals).abs() < 0.01
     ).all(), "Claim item totals do not reconcile"
+    
+    # Validate settlement records
+    settlements = pd.read_csv(DATA_DIR / "settlements.csv").fillna("")
+
+    assert settlements["settlement_id"].is_unique, (
+        "Duplicate settlement IDs found"
+    )
+
+    assert settlements["claim_id"].isin(claims["claim_id"]).all(), (
+        "Settlement references an unknown claim"
+    )
+
+    valid_settlement_statuses = {
+        "PENDING", "APPROVED", "PAID", "REJECTED"
+    }
+
+    assert settlements["status"].isin(valid_settlement_statuses).all(), (
+        "Invalid settlement status found"
+    )
+
+    assert (
+        pd.to_numeric(settlements["amount"], errors="coerce").notna().all()
+        and (pd.to_numeric(settlements["amount"], errors="coerce") >= 0).all()
+    ), "Settlement amounts must be valid non-negative numbers"
+
 
     print("DATA VALIDATION PASSED")
     print(f"Customers: {len(customers)}")
