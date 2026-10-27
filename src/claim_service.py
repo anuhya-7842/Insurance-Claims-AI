@@ -1,10 +1,41 @@
-
+import csv
+from datetime import datetime
 import pandas as pd
 
 from src.claims_engine import assess_claim
 
 
 DATA_DIR = __import__("pathlib").Path(__file__).resolve().parent.parent / "data"
+
+def log_claim_event(claim_id, event_type, details):
+    events_path = DATA_DIR / "claim_events.csv"
+
+    if not events_path.exists():
+        return
+
+    with open(events_path, "r", newline="", encoding="utf-8") as file:
+        event_count = sum(1 for _ in file) - 1
+
+    event = {
+        "event_id": f"EVT-{event_count + 1:06d}",
+        "claim_id": claim_id,
+        "event_type": event_type,
+        "event_time": datetime.now().isoformat(timespec="seconds"),
+        "details": details,
+    }
+
+    with open(events_path, "a", newline="", encoding="utf-8") as file:
+        writer = csv.DictWriter(
+            file,
+            fieldnames=[
+                "event_id",
+                "claim_id",
+                "event_type",
+                "event_time",
+                "details",
+            ],
+        )
+        writer.writerow(event)
 
 
 def load_table(name):
@@ -88,5 +119,23 @@ def process_claim(claim_id):
                 "to continue claim assessment."
             ),
         }
+
+    log_claim_event(
+        claim_id=claim_id,
+        event_type="CLAIM_ASSESSED",
+        details=(
+            f"Eligibility: {result.get('eligibility')}; "
+            f"Reason: {result.get('decision_reason')}"
+        ),
+    )
+
+    if result.get("document_request"):
+        log_claim_event(
+            claim_id=claim_id,
+            event_type="DOCUMENTS_REQUESTED",
+            details=", ".join(
+                result["document_request"]["missing_documents"]
+            ),
+        )
 
     return result, 200
