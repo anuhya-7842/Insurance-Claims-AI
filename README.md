@@ -153,7 +153,7 @@ Refer to [`docs/data_dictionary.md`](docs/data_dictionary.md) for descriptions o
 
 ## Author
 
-**Dhathri Anuhya Devarampati**
+**Venkata Dhathri Anuhya Devarampati**
 
 GitHub: [anuhya-7842](https://github.com/anuhya-7842)
 
