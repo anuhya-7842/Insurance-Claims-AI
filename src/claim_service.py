@@ -73,4 +73,20 @@ def process_claim(claim_id):
         all_settlements=settlements.to_dict(orient="records"),
     )
 
+    if result.get("eligibility") == "NEEDS_DOCUMENTS":
+        missing_documents = [
+            item.split(":", 1)[1]
+            for item in result.get("decision_reason", "").split(";")
+            if item.startswith("MISSING_DOCUMENTS:")
+        ]
+
+        result["document_request"] = {
+            "status": "PENDING",
+            "missing_documents": missing_documents,
+            "message": (
+                "Please submit the missing documents "
+                "to continue claim assessment."
+            ),
+        }
+
     return result, 200
