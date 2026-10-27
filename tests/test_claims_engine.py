@@ -212,4 +212,15 @@ def test_settlement_exceeding_coverage_limit():
         in result["decision_reason"]
     )
 
+from src.claim_service import process_claim
+
+
+def test_missing_document_request_is_created():
+    result, status_code = process_claim("CLM-2026-000005")
+
+    assert status_code == 200
+    assert result["eligibility"] == "NEEDS_DOCUMENTS"
+    assert result["document_request"]["status"] == "PENDING"
+    assert "INVOICE" in result["document_request"]["missing_documents"]
+
 
