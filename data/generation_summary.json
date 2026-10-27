@@ -1,0 +1,19 @@
+{
+  "seed": 20261022,
+  "generated_at": "2026-10-27",
+  "counts": {
+    "customers": 1000,
+    "policies": 2000,
+    "coverages": 2000,
+    "incidents": 999,
+    "claims": 1000,
+    "claim_items": 1000,
+    "documents": 2999,
+    "adjusters": 20,
+    "assessments": 1000,
+    "reserves": 1000,
+    "settlements": 103,
+    "claim_events": 1000,
+    "ground_truth": 8
+  }
+}
