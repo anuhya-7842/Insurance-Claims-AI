@@ -1,8 +1,7 @@
 
 from flask import Flask, jsonify, request
 
-from src.claim_service import process_claim
-
+from src.claim_service import process_claim, get_claims_for_review
 app = Flask(__name__)
 
 
@@ -15,6 +14,7 @@ def home():
         "endpoints": {
             "health": "/health",
             "process_claim": "/api/claims/<claim_id>/assess",
+            "claims_for_review": "/api/claims/review",
         },
     })
 
@@ -23,7 +23,10 @@ def home():
 def health():
     return jsonify({"status": "healthy"}), 200
 
-
+@app.get("/api/claims/review")
+def claims_for_review_endpoint():
+    result, status_code = get_claims_for_review()
+    return jsonify(result), status_code
 @app.get("/api/claims/<claim_id>/assess")
 def assess_claim_endpoint(claim_id):
     result, status_code = process_claim(claim_id)

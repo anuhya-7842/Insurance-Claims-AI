@@ -1,5 +1,6 @@
 import csv
 from datetime import datetime
+from unittest import result
 import pandas as pd
 
 from src.claims_engine import assess_claim
@@ -55,8 +56,7 @@ def get_record(df, column, value):
 
     return matches.iloc[0].to_dict()
 
-
-def process_claim(claim_id):
+def process_claim(claim_id, log_events=True):
     claims = load_table("claims")
     policies = load_table("policies")
     coverages = load_table("coverages")
@@ -120,22 +120,48 @@ def process_claim(claim_id):
             ),
         }
 
-    log_claim_event(
-        claim_id=claim_id,
-        event_type="CLAIM_ASSESSED",
-        details=(
-            f"Eligibility: {result.get('eligibility')}; "
-            f"Reason: {result.get('decision_reason')}"
-        ),
-    )
-
-    if result.get("document_request"):
+    
+    if log_events:
         log_claim_event(
             claim_id=claim_id,
-            event_type="DOCUMENTS_REQUESTED",
-            details=", ".join(
-                result["document_request"]["missing_documents"]
+            event_type="CLAIM_ASSESSED",
+            details=(
+                f"Eligibility: {result.get('eligibility')}; "
+                f"Reason: {result.get('decision_reason')}"
             ),
         )
 
+        if result.get("document_request"):
+            log_claim_event(
+                claim_id=claim_id,
+                event_type="DOCUMENTS_REQUESTED",
+                details=", ".join(
+                    result["document_request"]["missing_documents"]
+                ),
+            )
+
+
     return result, 200
+
+def get_claims_for_review():
+    claims = load_table("claims")
+    review_claims = []
+
+    for claim_id in claims["claim_id"]:
+        result, status_code = process_claim(claim_id, log_events=False)
+
+        if status_code != 200:
+            continue
+
+        if result.get("eligibility") in {
+            "NEEDS_REVIEW",
+            "NEEDS_DOCUMENTS",
+        }:
+            review_claims.append(result)
+
+    return {
+        "count": len(review_claims),
+        "claims": review_claims,
+    }, 200
+
+
