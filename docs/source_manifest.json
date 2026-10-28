@@ -1,0 +1,83 @@
+
+{
+  "project": "Insurance Claims AI",
+  "data_type": "Synthetic insurance claims data",
+  "generation": {
+    "script": "src/data_generator.py",
+    "seed": 20261022,
+    "default_policy_count": 2000,
+    "default_claim_count": 1000,
+    "output_directory": "data/",
+    "reproducibility": "Using the same seed and generation settings produces identical generated datasets."
+  },
+  "datasets": [
+    {
+      "file": "customers.csv",
+      "purpose": "Customer records associated with insurance policies and claims."
+    },
+    {
+      "file": "policies.csv",
+      "purpose": "Insurance policy records, including policy details and lifecycle information."
+    },
+    {
+      "file": "coverages.csv",
+      "purpose": "Coverage details and limits associated with policies."
+    },
+    {
+      "file": "incidents.csv",
+      "purpose": "Reported incidents associated with insurance claims."
+    },
+    {
+      "file": "claims.csv",
+      "purpose": "Claim submissions and their reported details."
+    },
+    {
+      "file": "claim_items.csv",
+      "purpose": "Individual items and amounts associated with claims."
+    },
+    {
+      "file": "documents.csv",
+      "purpose": "Claim documents and their availability or verification status."
+    },
+    {
+      "file": "adjusters.csv",
+      "purpose": "Insurance adjuster records used in the claims workflow."
+    },
+    {
+      "file": "assessments.csv",
+      "purpose": "Generated claim assessment records."
+    },
+    {
+      "file": "reserves.csv",
+      "purpose": "Financial reserves associated with claims."
+    },
+    {
+      "file": "settlements.csv",
+      "purpose": "Settlement records, including intentionally seeded anomalies."
+    },
+    {
+      "file": "claim_events.csv",
+      "purpose": "Claim lifecycle and audit event records."
+    },
+    {
+      "file": "ground_truth.csv",
+      "purpose": "Reference labels for intentionally seeded anomalous claims."
+    },
+    {
+      "file": "generation_summary.json",
+      "purpose": "Records the generation seed, date, and dataset counts."
+    },
+    {
+      "file": "validation_summary.json",
+      "purpose": "Records the outcome and key counts from data validation."
+    }
+  ],
+  "validation": {
+    "script": "src/validate_data.py",
+    "command": "python -m src.validate_data",
+    "summary_file": "data/validation_summary.json"
+  },
+  "documentation": {
+    "data_dictionary": "docs/data_dictionary.md"
+  }
+}
