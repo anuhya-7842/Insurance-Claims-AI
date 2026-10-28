@@ -167,7 +167,7 @@ def generate_data(
             issue_type = "POLICY_CANCELLED"
 
         claimed_amount = round(
-            rng.uniform(250, coverage["limit_amount"] * 1.5), 2
+            rng.uniform(250, coverage["limit_amount"] * 0.95), 2
         )
 
         # Claim 3: duplicate incident.
