@@ -371,11 +371,22 @@ def generate_data(
         elif i == 8:
             ground_truth_issue = "DUPLICATE_CLAIM"
 
+        expected_decisions = {
+            "INCIDENT_BEFORE_POLICY_START": "INELIGIBLE",
+            "POLICY_CANCELLED": "INELIGIBLE",
+            "DUPLICATE_INCIDENT": "NEEDS_REVIEW",
+            "CLAIM_OVER_LIMIT": "NEEDS_REVIEW",
+            "MISSING_MANDATORY_DOCUMENT": "NEEDS_DOCUMENTS",
+            "SETTLEMENT_EXCEEDS_COVERAGE_LIMIT": "NEEDS_REVIEW",
+            "DUPLICATE_PAYMENT": "NEEDS_REVIEW",
+            "DUPLICATE_CLAIM": "NEEDS_REVIEW",
+        }
+
         if ground_truth_issue != "NONE":
             ground_truth.append({
                 "claim_id": claim_id,
                 "issue_type": ground_truth_issue,
-                "expected_decision": "NEEDS_REVIEW",
+                "expected_decision": expected_decisions[ground_truth_issue],
             })
 
     # Step 5: Export every entity to its own CSV file.
@@ -441,6 +452,7 @@ def generate_data(
     # Export all datasets to a SQLite-compatible SQL seed file.
     sql_path = OUTPUT_DIR / "insurance_claims.sql"
     database_path = OUTPUT_DIR / "insurance_claims.db"
+    database_path.unlink(missing_ok=True)
 
     with sqlite3.connect(database_path) as connection:
         connection.execute("PRAGMA foreign_keys = ON")
