@@ -81,7 +81,7 @@ Required fields cannot be null.
 - assessment_id: string, PK, required, unique.
 - claim_id: string, FK → Claim, required.
 - adjuster_id: string, FK → Adjuster, optional until assigned.
-- eligibility: enum (ELIGIBLE, INELIGIBLE, NEEDS_REVIEW), required.
+- eligibility: enum (ELIGIBLE, INELIGIBLE, NEEDS_REVIEW, NEEDS_DOCUMENTS), required.
 - recommended_amount: decimal, USD, non-negative.
 - decision_reason: string, required.
 - assessed_at: datetime, required.
