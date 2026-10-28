@@ -1,0 +1,11 @@
+{
+  "status": "PASSED",
+  "counts": {
+    "customers": 1000,
+    "policies": 2000,
+    "claims": 1000,
+    "incidents": 999,
+    "documents": 2999,
+    "claim_types": 5
+  }
+}

@@ -166,6 +166,25 @@ def validate_data():
     ), "Settlement amounts must be valid non-negative numbers"
 
 
+   
+    summary = {
+        "status": "PASSED",
+        "counts": {
+            "customers": len(customers),
+            "policies": len(policies),
+            "claims": len(claims),
+            "incidents": len(incidents),
+            "documents": len(documents),
+            "claim_types": int(claims["claim_type"].nunique()),
+        },
+    }
+
+    import json
+
+    summary_path = DATA_DIR / "validation_summary.json"
+    with summary_path.open("w", encoding="utf-8") as file:
+        json.dump(summary, file, indent=2)
+
     print("DATA VALIDATION PASSED")
     print(f"Customers: {len(customers)}")
     print(f"Policies: {len(policies)}")
@@ -173,7 +192,9 @@ def validate_data():
     print(f"Incidents: {len(incidents)}")
     print(f"Documents: {len(documents)}")
     print(f"Claim types: {claims['claim_type'].nunique()}")
+    print(f"Summary saved to: {summary_path}")
 
 
 if __name__ == "__main__":
     validate_data()
+
