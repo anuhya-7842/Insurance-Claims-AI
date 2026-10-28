@@ -1,7 +1,6 @@
 
 from src.claims_engine import assess_claim
-
-
+from src.claim_service import process_claim, route_claim_for_settlement
 def make_test_data():
     claim = {
         "claim_id": "CLM-2026-000001",
@@ -222,5 +221,31 @@ def test_missing_document_request_is_created():
     assert result["eligibility"] == "NEEDS_DOCUMENTS"
     assert result["document_request"]["status"] == "PENDING"
     assert "INVOICE" in result["document_request"]["missing_documents"]
+def test_settlement_routing_blocks_duplicate_paid_settlements():
+    result, status_code = route_claim_for_settlement(
+        "CLM-2026-000007"
+    )
 
+    assert status_code == 200
+    assert result["routing_status"] == "BLOCKED"
+    assert result["reason"] == "EXISTING_PAID_SETTLEMENT"
+    assert result["existing_paid_settlements"] == 2
 
+def test_settlement_routing_blocks_ineligible_claim():
+    result, status_code = route_claim_for_settlement(
+        "CLM-2026-000001"
+    )
+
+    assert status_code == 200
+    assert result["routing_status"] == "BLOCKED"
+    assert result["reason"] == "INELIGIBLE"
+    assert result["decision_reason"] == "INCIDENT_BEFORE_POLICY_START"
+def test_settlement_routing_allows_eligible_claim_without_settlement():
+    result, status_code = route_claim_for_settlement(
+        "CLM-2026-000009"
+    )
+
+    assert status_code == 200
+    assert result["routing_status"] == "READY_FOR_SETTLEMENT_REVIEW"
+    assert result["recommended_amount"] > 0
+    assert "No payment has been created or issued." in result["message"]

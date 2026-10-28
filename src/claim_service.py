@@ -164,4 +164,82 @@ def get_claims_for_review():
         "claims": review_claims,
     }, 200
 
+def route_claim_for_settlement(claim_id):
+    """Determine whether a claim can be routed for settlement.
 
+    This function is a dry run: it does not create payments
+    or modify the settlements CSV.
+    """
+    settlements = load_table("settlements")
+
+    result, status_code = process_claim(
+        claim_id,
+        log_events=False,
+    )
+
+    if status_code != 200:
+        return result, status_code
+
+    claim_settlements = settlements[
+        settlements["claim_id"] == claim_id
+    ]
+
+    paid_settlements = claim_settlements[
+        claim_settlements["status"] == "PAID"
+    ]
+
+    if not paid_settlements.empty:
+        return {
+            "claim_id": claim_id,
+            "routing_status": "BLOCKED",
+            "reason": "EXISTING_PAID_SETTLEMENT",
+            "existing_paid_settlements": len(paid_settlements),
+            "message": (
+                "A paid settlement already exists. "
+                "Do not create another payment."
+            ),
+        }, 200
+
+    if not claim_settlements.empty:
+        return {
+            "claim_id": claim_id,
+            "routing_status": "NEEDS_REVIEW",
+            "reason": "EXISTING_SETTLEMENT_RECORD",
+            "message": (
+                "A settlement record already exists. "
+                "Review it before creating another."
+            ),
+        }, 200
+
+    if result["eligibility"] != "ELIGIBLE":
+        return {
+            "claim_id": claim_id,
+            "routing_status": "BLOCKED",
+            "reason": result["eligibility"],
+            "decision_reason": result["decision_reason"],
+            "message": (
+                "Only eligible claims can proceed "
+                "to settlement routing."
+            ),
+        }, 200
+
+    if result["recommended_amount"] <= 0:
+        return {
+            "claim_id": claim_id,
+            "routing_status": "NEEDS_REVIEW",
+            "reason": "NON_POSITIVE_RECOMMENDED_AMOUNT",
+            "message": (
+                "The recommended settlement amount must "
+                "be positive before routing."
+            ),
+        }, 200
+
+    return {
+        "claim_id": claim_id,
+        "routing_status": "READY_FOR_SETTLEMENT_REVIEW",
+        "recommended_amount": result["recommended_amount"],
+        "message": (
+            "Ready for settlement review. "
+            "No payment has been created or issued."
+        ),
+    }, 200
