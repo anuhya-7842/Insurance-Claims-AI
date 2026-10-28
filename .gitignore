@@ -21,3 +21,4 @@ venv/
 # Generated temporary files
 *.tmp
 .DS_Store
+src/data_generator.py.bak

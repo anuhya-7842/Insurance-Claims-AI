@@ -46,6 +46,8 @@ def validate_data():
     adjusters = load_csv("adjusters")
     assessments = load_csv("assessments")
     reserves = load_csv("reserves")
+    claim_events = load_csv("claim_events")
+    ground_truth = load_csv("ground_truth")
 
     # Primary-key uniqueness.
     primary_keys = [
@@ -59,12 +61,18 @@ def validate_data():
         (adjusters, "adjuster_id", "adjusters"),
         (assessments, "assessment_id", "assessments"),
         (reserves, "reserve_id", "reserves"),
+        (claim_events, "event_id", "claim_events"),
+        (ground_truth, "claim_id", "ground_truth"),
     ]
 
     for df, key, table in primary_keys:
         check_unique(df, key, table)
 
     # Foreign-key integrity.
+    check_foreign_key(
+        incidents, "customer_id", customers, "customer_id",
+        "Incident -> Customer"
+    )
     check_foreign_key(
         policies, "customer_id", customers, "customer_id",
         "Policy -> Customer"
@@ -100,6 +108,14 @@ def validate_data():
     check_foreign_key(
         reserves, "claim_id", claims, "claim_id",
         "Reserve -> Claim"
+    )
+    check_foreign_key(
+        claim_events, "claim_id", claims, "claim_id",
+        "ClaimEvent -> Claim"
+    )
+    check_foreign_key(
+        ground_truth, "claim_id", claims, "claim_id",
+        "GroundTruth -> Claim"
     )
         # Validate policy date ordering.
     policy_start = pd.to_datetime(
