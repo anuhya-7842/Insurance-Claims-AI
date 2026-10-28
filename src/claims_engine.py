@@ -29,16 +29,19 @@ def assess_claim(
 
     reasons = []
     decision = "ELIGIBLE"
-    # Rule 0: Detect another claim for the same policy and incident.
+    # Rule 0: Detect duplicate claims and duplicate incidents.
     if all_claims is not None:
         for other_claim in all_claims:
-            if (
-                other_claim["claim_id"] != claim["claim_id"]
-                and other_claim["policy_id"] == claim["policy_id"]
-                and other_claim["incident_id"] == claim["incident_id"]
-            ):
+            if other_claim["claim_id"] == claim["claim_id"]:
+                continue
+
+            if other_claim["incident_id"] == claim["incident_id"]:
+                if other_claim["policy_id"] == claim["policy_id"]:
+                    reasons.append("DUPLICATE_CLAIM")
+                else:
+                    reasons.append("DUPLICATE_INCIDENT")
+
                 decision = "NEEDS_REVIEW"
-                reasons.append("DUPLICATE_CLAIM")
                 break
     # Rule: Flag multiple paid settlements for the same claim.
     if all_settlements is not None:
@@ -92,8 +95,14 @@ def assess_claim(
         decision = "INELIGIBLE"
         reasons.append("INCIDENT_OUTSIDE_COVERAGE_PERIOD")
 
-    # Rule 2: Policy must not be cancelled.
-    if policy["status"] == "CANCELLED":
+    # Rule 2: Policy must not have been cancelled before the incident.
+    cancellation_date = policy.get("cancellation_date")
+
+    if (
+        policy["status"] == "CANCELLED"
+        and cancellation_date is not None
+        and incident_date >= date.fromisoformat(cancellation_date)
+    ):
         decision = "INELIGIBLE"
         reasons.append("POLICY_CANCELLED")
 

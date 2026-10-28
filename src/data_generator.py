@@ -86,9 +86,12 @@ def generate_data(
             start = min(start, today)
             end = max(end, today + timedelta(days=1))
 
+        cancellation_date = None
+
         if status == "CANCELLED":
             end = min(end, today - timedelta(days=1))
             start = min(start, end)
+            cancellation_date = end
 
         policy_id = f"POL-{product}-2026-{i:06d}"
         limit_amount = rng.choice([5000, 10000, 25000, 50000])
@@ -101,6 +104,11 @@ def generate_data(
             "product_type": product,
             "start_date": start.isoformat(),
             "end_date": end.isoformat(),
+            "cancellation_date": (
+                cancellation_date.isoformat()
+                if cancellation_date is not None
+                else None
+            ),
             "status": status,
             "premium_amount": round(rng.uniform(200, 2500), 2),
             "created_at": "2026-01-01T09:00:00",
@@ -164,6 +172,15 @@ def generate_data(
         if i == 2:
             policy["status"] = "CANCELLED"
             incident_date = min(end, today)
+            cancellation_date = incident_date - timedelta(days=1)
+
+            if cancellation_date < start:
+                cancellation_date = start
+                incident_date = start + timedelta(days=1)
+
+            policy["cancellation_date"] = (
+                cancellation_date.isoformat()
+            )
             issue_type = "POLICY_CANCELLED"
 
         claimed_amount = round(

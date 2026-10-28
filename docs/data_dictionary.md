@@ -19,6 +19,7 @@ Required fields cannot be null.
 - product_type: enum (AUTO, PROPERTY, HEALTH, TRAVEL, LIABILITY), required.
 - start_date: date, required.
 - end_date: date, required, must be on or after start_date.
+- cancellation_date: date, nullable; required when status is CANCELLED.
 - status: enum (ACTIVE, EXPIRED, CANCELLED), required.
 - premium_amount: decimal, USD, non-negative.
 - created_at: datetime, required.

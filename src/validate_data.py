@@ -134,6 +134,27 @@ def validate_data():
     assert (policy_start <= policy_end).all(), (
         "Policy start date must not be after end date"
     )
+        # Validate policy cancellation dates.
+    cancellation_dates = pd.to_datetime(
+        policies["cancellation_date"], errors="coerce"
+    )
+
+    cancelled_policies = policies["status"] == "CANCELLED"
+
+    assert cancellation_dates[cancelled_policies].notna().all(), (
+        "Cancelled policies must have a cancellation date"
+    )
+
+    assert cancellation_dates[~cancelled_policies].isna().all(), (
+        "Non-cancelled policies must not have a cancellation date"
+    )
+
+    assert (
+        cancellation_dates[cancelled_policies]
+        >= policy_start[cancelled_policies]
+    ).all(), (
+        "Cancellation date must not be before policy start date"
+    )
         # Validate incident dates.
     incident_dates = pd.to_datetime(
         incidents["incident_date"], errors="raise"

@@ -81,6 +81,7 @@ def test_incident_before_policy_start():
 def test_cancelled_policy():
     claim, policy, coverage, incident, documents = make_test_data()
     policy["status"] = "CANCELLED"
+    policy["cancellation_date"] = "2026-06-01"
 
     result = assess_claim(
         claim, policy, coverage, incident, documents
@@ -249,3 +250,26 @@ def test_settlement_routing_allows_eligible_claim_without_settlement():
     assert result["routing_status"] == "READY_FOR_SETTLEMENT_REVIEW"
     assert result["recommended_amount"] > 0
     assert "No payment has been created or issued." in result["message"]
+def test_duplicate_incident_needs_review():
+    claim, policy, coverage, incident, documents = make_test_data()
+
+    other_claim = {
+        "claim_id": "CLM-2026-000002",
+        "policy_id": "POL-HOME-2026-000002",
+        "incident_id": incident["incident_id"],
+    }
+
+    claim["policy_id"] = policy["policy_id"]
+    claim["incident_id"] = incident["incident_id"]
+
+    result = assess_claim(
+        claim,
+        policy,
+        coverage,
+        incident,
+        documents,
+        all_claims=[other_claim],
+    )
+
+    assert result["eligibility"] == "NEEDS_REVIEW"
+    assert "DUPLICATE_INCIDENT" in result["decision_reason"]
