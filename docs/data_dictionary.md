@@ -1,5 +1,5 @@
 
-# Insurance Claims AI — Data Dictionary
+# Insurance Claims AI - Data Dictionary
 
 All dates use ISO 8601 format: YYYY-MM-DD.
 All monetary amounts use USD.
@@ -50,7 +50,7 @@ Required fields cannot be null.
 - description: string, required.
 - amount: decimal, USD, positive.
 - quantity: integer, positive.
-- item_total: decimal, USD; amount × quantity.
+- item_total: decimal, USD; amount multiplied by quantity.
 
 ## 6. Document
 - document_id: string, PK, required, unique.
@@ -99,7 +99,7 @@ Required fields cannot be null.
 - settlement_id: string, PK, required, unique.
 - claim_id: string, FK → Claim, required.
 - amount: decimal, USD, non-negative.
-- status: enum (PROPOSED, APPROVED, PAID, VOID), required.
+- status: enum (PENDING, APPROVED, PAID, REJECTED), required.
 - settled_at: datetime, optional until settled.
 - transaction_reference: string, optional; unique when present.
 - reason: string, required.
@@ -117,6 +117,24 @@ Required fields cannot be null.
 - Adjuster 1:N Assessment; an assessment may be unassigned.
 - Claim 1:N Reserve.
 - Claim 1:N Settlement; multiple records allow payment history and duplicate-payment detection.
+- Customer to Policy: each policy belongs to exactly one customer; a customer may have multiple policies.
+- Policy to Coverage: each coverage belongs to one policy; a policy may have multiple coverages.
+- Claim to Incident: each claim references one incident; multiple claims may reference the same incident.
+- Claim to Assessment, Reserve, and Settlement: each record references one claim; a claim may have multiple records of each type.
+- Assessment to Adjuster: an assessment may be unassigned; when assigned, it references one adjuster.
+
+## Key and Relationship Constraints
+
+- Every primary key must be unique and non-null.
+- Every foreign key must reference an existing parent record, except explicitly optional relationships.
+- Each Policy references one Customer.
+- Each Coverage references one Policy.
+- Each Claim references one Policy and one Incident.
+- Each ClaimItem and Document references one Claim.
+- Each Assessment references one Claim and may reference an Adjuster.
+- Each Reserve and Settlement references one Claim.
+- Multiple Assessments, Reserves, and Settlements may exist for a Claim to preserve history.
+- Foreign-key relationships must be validated before claim assessment or settlement routing.
 
 ## Lifecycle and Audit Requirements
 
