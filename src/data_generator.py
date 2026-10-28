@@ -385,21 +385,94 @@ def generate_data(
             OUTPUT_DIR / f"{name}.csv",
             index=False,
         )
+    primary_keys = {
+        "customers": "customer_id",
+        "policies": "policy_id",
+        "coverages": "coverage_id",
+        "incidents": "incident_id",
+        "claims": "claim_id",
+        "claim_items": "claim_item_id",
+        "documents": "document_id",
+        "adjusters": "adjuster_id",
+        "assessments": "assessment_id",
+        "reserves": "reserve_id",
+        "settlements": "settlement_id",
+        "claim_events": "event_id",
+        "ground_truth": "claim_id",
+    }
+
+    foreign_keys = {
+        "policies": [("customer_id", "customers", "customer_id")],
+        "coverages": [("policy_id", "policies", "policy_id")],
+        "incidents": [("customer_id", "customers", "customer_id")],
+        "claims": [
+            ("policy_id", "policies", "policy_id"),
+            ("incident_id", "incidents", "incident_id"),
+        ],
+        "claim_items": [("claim_id", "claims", "claim_id")],
+        "documents": [("claim_id", "claims", "claim_id")],
+        "assessments": [
+            ("claim_id", "claims", "claim_id"),
+            ("adjuster_id", "adjusters", "adjuster_id"),
+        ],
+        "reserves": [("claim_id", "claims", "claim_id")],
+        "settlements": [("claim_id", "claims", "claim_id")],
+        "claim_events": [("claim_id", "claims", "claim_id")],
+        "ground_truth": [("claim_id", "claims", "claim_id")],
+    }
 
     # Export all datasets to a SQLite-compatible SQL seed file.
     sql_path = OUTPUT_DIR / "insurance_claims.sql"
     database_path = OUTPUT_DIR / "insurance_claims.db"
 
     with sqlite3.connect(database_path) as connection:
+        connection.execute("PRAGMA foreign_keys = ON")
+
+        # Create tables with primary and foreign key constraints.
+        for name, rows in datasets.items():
+            df = pd.DataFrame(rows)
+            column_definitions = []
+
+            for column in df.columns:
+                if pd.api.types.is_integer_dtype(df[column].dtype):
+                    sql_type = "INTEGER"
+                elif pd.api.types.is_float_dtype(df[column].dtype):
+                    sql_type = "REAL"
+                else:
+                    sql_type = "TEXT"
+
+                definition = f'"{column}" {sql_type}'
+
+                if primary_keys.get(name) == column:
+                    definition += " PRIMARY KEY NOT NULL"
+
+                column_definitions.append(definition)
+
+            for child_column, parent_table, parent_column in foreign_keys.get(
+                name, []
+            ):
+                column_definitions.append(
+                    f'FOREIGN KEY ("{child_column}") '
+                    f'REFERENCES "{parent_table}" ("{parent_column}")'
+                )
+
+            create_table_sql = (
+                f'CREATE TABLE "{name}" '
+                f'({", ".join(column_definitions)})'
+            )
+            connection.execute(create_table_sql)
+
+        # Insert rows into the created tables.
         for name, rows in datasets.items():
             pd.DataFrame(rows).to_sql(
                 name,
                 connection,
-                if_exists="replace",
+                if_exists="append",
                 index=False,
             )
 
         with sql_path.open("w", encoding="utf-8") as sql_file:
+            sql_file.write("PRAGMA foreign_keys = ON;\n")
             for line in connection.iterdump():
                 sql_file.write(line + "\n")
 

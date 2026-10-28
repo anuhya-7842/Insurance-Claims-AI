@@ -1,41 +1,27 @@
+PRAGMA foreign_keys = ON;
 BEGIN TRANSACTION;
-CREATE TABLE "adjusters" (
-"adjuster_id" TEXT,
-  "full_name" TEXT,
-  "specialization" TEXT,
-  "active" INTEGER,
-  "max_open_claims" INTEGER
-);
-INSERT INTO "adjusters" VALUES('ADJ-000001','Adjuster 001','AUTO',1,100);
-INSERT INTO "adjusters" VALUES('ADJ-000002','Adjuster 002','PROPERTY',1,100);
-INSERT INTO "adjusters" VALUES('ADJ-000003','Adjuster 003','HEALTH',1,100);
-INSERT INTO "adjusters" VALUES('ADJ-000004','Adjuster 004','TRAVEL',1,100);
-INSERT INTO "adjusters" VALUES('ADJ-000005','Adjuster 005','LIABILITY',1,100);
-INSERT INTO "adjusters" VALUES('ADJ-000006','Adjuster 006','AUTO',1,100);
-INSERT INTO "adjusters" VALUES('ADJ-000007','Adjuster 007','PROPERTY',1,100);
-INSERT INTO "adjusters" VALUES('ADJ-000008','Adjuster 008','HEALTH',1,100);
-INSERT INTO "adjusters" VALUES('ADJ-000009','Adjuster 009','TRAVEL',1,100);
-INSERT INTO "adjusters" VALUES('ADJ-000010','Adjuster 010','LIABILITY',1,100);
-INSERT INTO "adjusters" VALUES('ADJ-000011','Adjuster 011','AUTO',1,100);
-INSERT INTO "adjusters" VALUES('ADJ-000012','Adjuster 012','PROPERTY',1,100);
-INSERT INTO "adjusters" VALUES('ADJ-000013','Adjuster 013','HEALTH',1,100);
-INSERT INTO "adjusters" VALUES('ADJ-000014','Adjuster 014','TRAVEL',1,100);
-INSERT INTO "adjusters" VALUES('ADJ-000015','Adjuster 015','LIABILITY',1,100);
-INSERT INTO "adjusters" VALUES('ADJ-000016','Adjuster 016','AUTO',1,100);
-INSERT INTO "adjusters" VALUES('ADJ-000017','Adjuster 017','PROPERTY',1,100);
-INSERT INTO "adjusters" VALUES('ADJ-000018','Adjuster 018','HEALTH',1,100);
-INSERT INTO "adjusters" VALUES('ADJ-000019','Adjuster 019','TRAVEL',1,100);
-INSERT INTO "adjusters" VALUES('ADJ-000020','Adjuster 020','LIABILITY',1,100);
-CREATE TABLE "assessments" (
-"assessment_id" TEXT,
-  "claim_id" TEXT,
-  "adjuster_id" TEXT,
-  "eligibility" TEXT,
-  "recommended_amount" REAL,
-  "assessed_at" TEXT,
-  "decision_reason" TEXT,
-  "rules_version" TEXT
-);
+CREATE TABLE "adjusters" ("adjuster_id" TEXT PRIMARY KEY NOT NULL, "full_name" TEXT, "specialization" TEXT, "active" TEXT, "max_open_claims" INTEGER);
+INSERT INTO "adjusters" VALUES('ADJ-000001','Adjuster 001','AUTO','1',100);
+INSERT INTO "adjusters" VALUES('ADJ-000002','Adjuster 002','PROPERTY','1',100);
+INSERT INTO "adjusters" VALUES('ADJ-000003','Adjuster 003','HEALTH','1',100);
+INSERT INTO "adjusters" VALUES('ADJ-000004','Adjuster 004','TRAVEL','1',100);
+INSERT INTO "adjusters" VALUES('ADJ-000005','Adjuster 005','LIABILITY','1',100);
+INSERT INTO "adjusters" VALUES('ADJ-000006','Adjuster 006','AUTO','1',100);
+INSERT INTO "adjusters" VALUES('ADJ-000007','Adjuster 007','PROPERTY','1',100);
+INSERT INTO "adjusters" VALUES('ADJ-000008','Adjuster 008','HEALTH','1',100);
+INSERT INTO "adjusters" VALUES('ADJ-000009','Adjuster 009','TRAVEL','1',100);
+INSERT INTO "adjusters" VALUES('ADJ-000010','Adjuster 010','LIABILITY','1',100);
+INSERT INTO "adjusters" VALUES('ADJ-000011','Adjuster 011','AUTO','1',100);
+INSERT INTO "adjusters" VALUES('ADJ-000012','Adjuster 012','PROPERTY','1',100);
+INSERT INTO "adjusters" VALUES('ADJ-000013','Adjuster 013','HEALTH','1',100);
+INSERT INTO "adjusters" VALUES('ADJ-000014','Adjuster 014','TRAVEL','1',100);
+INSERT INTO "adjusters" VALUES('ADJ-000015','Adjuster 015','LIABILITY','1',100);
+INSERT INTO "adjusters" VALUES('ADJ-000016','Adjuster 016','AUTO','1',100);
+INSERT INTO "adjusters" VALUES('ADJ-000017','Adjuster 017','PROPERTY','1',100);
+INSERT INTO "adjusters" VALUES('ADJ-000018','Adjuster 018','HEALTH','1',100);
+INSERT INTO "adjusters" VALUES('ADJ-000019','Adjuster 019','TRAVEL','1',100);
+INSERT INTO "adjusters" VALUES('ADJ-000020','Adjuster 020','LIABILITY','1',100);
+CREATE TABLE "assessments" ("assessment_id" TEXT PRIMARY KEY NOT NULL, "claim_id" TEXT, "adjuster_id" TEXT, "eligibility" TEXT, "recommended_amount" REAL, "assessed_at" TEXT, "decision_reason" TEXT, "rules_version" TEXT, FOREIGN KEY ("claim_id") REFERENCES "claims" ("claim_id"), FOREIGN KEY ("adjuster_id") REFERENCES "adjusters" ("adjuster_id"));
 INSERT INTO "assessments" VALUES('ASM-000001','CLM-2026-000001','ADJ-000001','NEEDS_REVIEW',1815.88,'2026-10-27T09:10:00','Pending deterministic rules evaluation','1.0');
 INSERT INTO "assessments" VALUES('ASM-000002','CLM-2026-000002','ADJ-000002','NEEDS_REVIEW',5091.75,'2026-10-27T09:10:00','Pending deterministic rules evaluation','1.0');
 INSERT INTO "assessments" VALUES('ASM-000003','CLM-2026-000003','ADJ-000003','NEEDS_REVIEW',3.67450000000000054356e+02,'2026-10-27T09:10:00','Pending deterministic rules evaluation','1.0');
@@ -1036,13 +1022,7 @@ INSERT INTO "assessments" VALUES('ASM-000997','CLM-2026-000997','ADJ-000017','NE
 INSERT INTO "assessments" VALUES('ASM-000998','CLM-2026-000998','ADJ-000018','NEEDS_REVIEW',7554.1,'2026-10-27T09:10:00','Pending deterministic rules evaluation','1.0');
 INSERT INTO "assessments" VALUES('ASM-000999','CLM-2026-000999','ADJ-000019','NEEDS_REVIEW',2716.08,'2026-10-27T09:10:00','Pending deterministic rules evaluation','1.0');
 INSERT INTO "assessments" VALUES('ASM-001000','CLM-2026-001000','ADJ-000020','NEEDS_REVIEW',4113.73,'2026-10-27T09:10:00','Pending deterministic rules evaluation','1.0');
-CREATE TABLE "claim_events" (
-"event_id" TEXT,
-  "claim_id" TEXT,
-  "event_type" TEXT,
-  "event_time" TEXT,
-  "details" TEXT
-);
+CREATE TABLE "claim_events" ("event_id" TEXT PRIMARY KEY NOT NULL, "claim_id" TEXT, "event_type" TEXT, "event_time" TEXT, "details" TEXT, FOREIGN KEY ("claim_id") REFERENCES "claims" ("claim_id"));
 INSERT INTO "claim_events" VALUES('EVT-000001','CLM-2026-000001','CLAIM_SUBMITTED','2026-10-27T09:00:00','Claim created by synthetic data generator');
 INSERT INTO "claim_events" VALUES('EVT-000002','CLM-2026-000002','CLAIM_SUBMITTED','2026-10-27T09:00:00','Claim created by synthetic data generator');
 INSERT INTO "claim_events" VALUES('EVT-000003','CLM-2026-000003','CLAIM_SUBMITTED','2026-10-27T09:00:00','Claim created by synthetic data generator');
@@ -2043,14 +2023,7 @@ INSERT INTO "claim_events" VALUES('EVT-000997','CLM-2026-000997','CLAIM_SUBMITTE
 INSERT INTO "claim_events" VALUES('EVT-000998','CLM-2026-000998','CLAIM_SUBMITTED','2026-10-27T09:00:00','Claim created by synthetic data generator');
 INSERT INTO "claim_events" VALUES('EVT-000999','CLM-2026-000999','CLAIM_SUBMITTED','2026-10-27T09:00:00','Claim created by synthetic data generator');
 INSERT INTO "claim_events" VALUES('EVT-001000','CLM-2026-001000','CLAIM_SUBMITTED','2026-10-27T09:00:00','Claim created by synthetic data generator');
-CREATE TABLE "claim_items" (
-"claim_item_id" TEXT,
-  "claim_id" TEXT,
-  "description" TEXT,
-  "amount" REAL,
-  "quantity" INTEGER,
-  "item_total" REAL
-);
+CREATE TABLE "claim_items" ("claim_item_id" TEXT PRIMARY KEY NOT NULL, "claim_id" TEXT, "description" TEXT, "amount" REAL, "quantity" INTEGER, "item_total" REAL, FOREIGN KEY ("claim_id") REFERENCES "claims" ("claim_id"));
 INSERT INTO "claim_items" VALUES('ITM-000001','CLM-2026-000001','Synthetic auto expense',2065.88,1,2065.88);
 INSERT INTO "claim_items" VALUES('ITM-000002','CLM-2026-000002','Synthetic property expense',5591.75,1,5591.75);
 INSERT INTO "claim_items" VALUES('ITM-000003','CLM-2026-000003','Synthetic health expense',617.45,1,617.45);
@@ -3051,17 +3024,7 @@ INSERT INTO "claim_items" VALUES('ITM-000997','CLM-2026-000997','Synthetic prope
 INSERT INTO "claim_items" VALUES('ITM-000998','CLM-2026-000998','Synthetic health expense',8054.1,1,8054.1);
 INSERT INTO "claim_items" VALUES('ITM-000999','CLM-2026-000999','Synthetic travel expense',2966.08,1,2966.08);
 INSERT INTO "claim_items" VALUES('ITM-001000','CLM-2026-001000','Synthetic liability expense',4613.73,1,4613.73);
-CREATE TABLE "claims" (
-"claim_id" TEXT,
-  "policy_id" TEXT,
-  "incident_id" TEXT,
-  "claim_date" TEXT,
-  "claimed_amount" REAL,
-  "claim_type" TEXT,
-  "status" TEXT,
-  "issue_type" TEXT,
-  "created_at" TEXT
-);
+CREATE TABLE "claims" ("claim_id" TEXT PRIMARY KEY NOT NULL, "policy_id" TEXT, "incident_id" TEXT, "claim_date" TEXT, "claimed_amount" REAL, "claim_type" TEXT, "status" TEXT, "issue_type" TEXT, "created_at" TEXT, FOREIGN KEY ("policy_id") REFERENCES "policies" ("policy_id"), FOREIGN KEY ("incident_id") REFERENCES "incidents" ("incident_id"));
 INSERT INTO "claims" VALUES('CLM-2026-000001','POL-AUTO-2026-000001','INC-000001','2025-12-27',2065.88,'AUTO','SUBMITTED','INCIDENT_BEFORE_POLICY_START','2026-10-27T09:00:00');
 INSERT INTO "claims" VALUES('CLM-2026-000002','POL-PROPERTY-2026-000002','INC-000002','2026-11-02',5591.75,'PROPERTY','SUBMITTED','POLICY_CANCELLED','2026-10-27T09:00:00');
 INSERT INTO "claims" VALUES('CLM-2026-000003','POL-HEALTH-2026-000003','INC-000002','2026-02-27',617.45,'HEALTH','SUBMITTED','DUPLICATE_INCIDENT','2026-10-27T09:00:00');
@@ -4062,16 +4025,7 @@ INSERT INTO "claims" VALUES('CLM-2026-000997','POL-PROPERTY-2026-000997','INC-00
 INSERT INTO "claims" VALUES('CLM-2026-000998','POL-HEALTH-2026-000998','INC-000998','2026-06-29',8054.1,'HEALTH','SUBMITTED','NONE','2026-10-27T09:00:00');
 INSERT INTO "claims" VALUES('CLM-2026-000999','POL-TRAVEL-2026-000999','INC-000999','2026-07-04',2966.08,'TRAVEL','SUBMITTED','NONE','2026-10-27T09:00:00');
 INSERT INTO "claims" VALUES('CLM-2026-001000','POL-LIABILITY-2026-001000','INC-001000','2026-03-19',4613.73,'LIABILITY','SUBMITTED','NONE','2026-10-27T09:00:00');
-CREATE TABLE "coverages" (
-"coverage_id" TEXT,
-  "policy_id" TEXT,
-  "coverage_type" TEXT,
-  "limit_amount" INTEGER,
-  "deductible_amount" INTEGER,
-  "exclusions" TEXT,
-  "effective_from" TEXT,
-  "effective_to" TEXT
-);
+CREATE TABLE "coverages" ("coverage_id" TEXT PRIMARY KEY NOT NULL, "policy_id" TEXT, "coverage_type" TEXT, "limit_amount" INTEGER, "deductible_amount" INTEGER, "exclusions" TEXT, "effective_from" TEXT, "effective_to" TEXT, FOREIGN KEY ("policy_id") REFERENCES "policies" ("policy_id"));
 INSERT INTO "coverages" VALUES('COV-000001','POL-AUTO-2026-000001','AUTO',5000,250,'["INTENTIONAL_DAMAGE"]','2025-12-28','2026-10-26');
 INSERT INTO "coverages" VALUES('COV-000002','POL-PROPERTY-2026-000002','PROPERTY',10000,500,'["INTENTIONAL_DAMAGE"]','2025-01-03','2026-10-28');
 INSERT INTO "coverages" VALUES('COV-000003','POL-HEALTH-2026-000003','HEALTH',5000,250,'["INTENTIONAL_DAMAGE"]','2025-04-20','2026-05-03');
@@ -6072,13 +6026,7 @@ INSERT INTO "coverages" VALUES('COV-001997','POL-PROPERTY-2026-001997','PROPERTY
 INSERT INTO "coverages" VALUES('COV-001998','POL-HEALTH-2026-001998','HEALTH',25000,500,'["INTENTIONAL_DAMAGE"]','2025-11-19','2027-01-23');
 INSERT INTO "coverages" VALUES('COV-001999','POL-TRAVEL-2026-001999','TRAVEL',10000,100,'["INTENTIONAL_DAMAGE"]','2025-09-14','2026-12-04');
 INSERT INTO "coverages" VALUES('COV-002000','POL-LIABILITY-2026-002000','LIABILITY',5000,250,'["INTENTIONAL_DAMAGE"]','2025-04-26','2026-10-26');
-CREATE TABLE "customers" (
-"customer_id" TEXT,
-  "full_name" TEXT,
-  "email" TEXT,
-  "phone" TEXT,
-  "created_at" TEXT
-);
+CREATE TABLE "customers" ("customer_id" TEXT PRIMARY KEY NOT NULL, "full_name" TEXT, "email" TEXT, "phone" TEXT, "created_at" TEXT);
 INSERT INTO "customers" VALUES('CUS-000001','Customer 00001','customer00001@example.test',NULL,'2026-01-01T09:00:00');
 INSERT INTO "customers" VALUES('CUS-000002','Customer 00002','customer00002@example.test',NULL,'2026-01-01T09:00:00');
 INSERT INTO "customers" VALUES('CUS-000003','Customer 00003','customer00003@example.test',NULL,'2026-01-01T09:00:00');
@@ -7079,15 +7027,7 @@ INSERT INTO "customers" VALUES('CUS-000997','Customer 00997','customer00997@exam
 INSERT INTO "customers" VALUES('CUS-000998','Customer 00998','customer00998@example.test',NULL,'2026-01-01T09:00:00');
 INSERT INTO "customers" VALUES('CUS-000999','Customer 00999','customer00999@example.test',NULL,'2026-01-01T09:00:00');
 INSERT INTO "customers" VALUES('CUS-001000','Customer 01000','customer01000@example.test',NULL,'2026-01-01T09:00:00');
-CREATE TABLE "documents" (
-"document_id" TEXT,
-  "claim_id" TEXT,
-  "document_type" TEXT,
-  "received_at" TEXT,
-  "status" TEXT,
-  "file_reference" TEXT,
-  "created_at" TEXT
-);
+CREATE TABLE "documents" ("document_id" TEXT PRIMARY KEY NOT NULL, "claim_id" TEXT, "document_type" TEXT, "received_at" TEXT, "status" TEXT, "file_reference" TEXT, "created_at" TEXT, FOREIGN KEY ("claim_id") REFERENCES "claims" ("claim_id"));
 INSERT INTO "documents" VALUES('DOC-CLM-2026-000001-001','CLM-2026-000001','CLAIM_FORM','2026-10-27T09:05:00','RECEIVED',NULL,'2026-10-27T09:05:00');
 INSERT INTO "documents" VALUES('DOC-CLM-2026-000001-002','CLM-2026-000001','INCIDENT_REPORT','2026-10-27T09:05:00','RECEIVED',NULL,'2026-10-27T09:05:00');
 INSERT INTO "documents" VALUES('DOC-CLM-2026-000001-003','CLM-2026-000001','INVOICE','2026-10-27T09:05:00','RECEIVED',NULL,'2026-10-27T09:05:00');
@@ -10087,11 +10027,7 @@ INSERT INTO "documents" VALUES('DOC-CLM-2026-000999-003','CLM-2026-000999','INVO
 INSERT INTO "documents" VALUES('DOC-CLM-2026-001000-001','CLM-2026-001000','CLAIM_FORM','2026-10-27T09:05:00','RECEIVED',NULL,'2026-10-27T09:05:00');
 INSERT INTO "documents" VALUES('DOC-CLM-2026-001000-002','CLM-2026-001000','INCIDENT_REPORT','2026-10-27T09:05:00','RECEIVED',NULL,'2026-10-27T09:05:00');
 INSERT INTO "documents" VALUES('DOC-CLM-2026-001000-003','CLM-2026-001000','INVOICE','2026-10-27T09:05:00','RECEIVED',NULL,'2026-10-27T09:05:00');
-CREATE TABLE "ground_truth" (
-"claim_id" TEXT,
-  "issue_type" TEXT,
-  "expected_decision" TEXT
-);
+CREATE TABLE "ground_truth" ("claim_id" TEXT PRIMARY KEY NOT NULL, "issue_type" TEXT, "expected_decision" TEXT, FOREIGN KEY ("claim_id") REFERENCES "claims" ("claim_id"));
 INSERT INTO "ground_truth" VALUES('CLM-2026-000001','INCIDENT_BEFORE_POLICY_START','NEEDS_REVIEW');
 INSERT INTO "ground_truth" VALUES('CLM-2026-000002','POLICY_CANCELLED','NEEDS_REVIEW');
 INSERT INTO "ground_truth" VALUES('CLM-2026-000003','DUPLICATE_INCIDENT','NEEDS_REVIEW');
@@ -10100,15 +10036,7 @@ INSERT INTO "ground_truth" VALUES('CLM-2026-000005','MISSING_MANDATORY_DOCUMENT'
 INSERT INTO "ground_truth" VALUES('CLM-2026-000006','SETTLEMENT_EXCEEDS_COVERAGE_LIMIT','NEEDS_REVIEW');
 INSERT INTO "ground_truth" VALUES('CLM-2026-000007','DUPLICATE_PAYMENT','NEEDS_REVIEW');
 INSERT INTO "ground_truth" VALUES('CLM-2026-000008','DUPLICATE_CLAIM','NEEDS_REVIEW');
-CREATE TABLE "incidents" (
-"incident_id" TEXT,
-  "customer_id" TEXT,
-  "incident_date" TEXT,
-  "incident_type" TEXT,
-  "description" TEXT,
-  "location" TEXT,
-  "issue_type" TEXT
-);
+CREATE TABLE "incidents" ("incident_id" TEXT PRIMARY KEY NOT NULL, "customer_id" TEXT, "incident_date" TEXT, "incident_type" TEXT, "description" TEXT, "location" TEXT, "issue_type" TEXT, FOREIGN KEY ("customer_id") REFERENCES "customers" ("customer_id"));
 INSERT INTO "incidents" VALUES('INC-000001','CUS-000001','2025-12-27','AUTO','Synthetic auto incident',NULL,'NONE');
 INSERT INTO "incidents" VALUES('INC-000002','CUS-000001','2026-10-27','PROPERTY','Synthetic property incident',NULL,'NONE');
 INSERT INTO "incidents" VALUES('INC-000004','CUS-000002','2026-04-01','TRAVEL','Synthetic travel incident',NULL,'NONE');
@@ -11108,16 +11036,7 @@ INSERT INTO "incidents" VALUES('INC-000997','CUS-000499','2026-05-01','PROPERTY'
 INSERT INTO "incidents" VALUES('INC-000998','CUS-000499','2026-06-25','HEALTH','Synthetic health incident',NULL,'NONE');
 INSERT INTO "incidents" VALUES('INC-000999','CUS-000500','2026-06-30','TRAVEL','Synthetic travel incident',NULL,'NONE');
 INSERT INTO "incidents" VALUES('INC-001000','CUS-000500','2026-03-04','LIABILITY','Synthetic liability incident',NULL,'NONE');
-CREATE TABLE "policies" (
-"policy_id" TEXT,
-  "customer_id" TEXT,
-  "product_type" TEXT,
-  "start_date" TEXT,
-  "end_date" TEXT,
-  "status" TEXT,
-  "premium_amount" REAL,
-  "created_at" TEXT
-);
+CREATE TABLE "policies" ("policy_id" TEXT PRIMARY KEY NOT NULL, "customer_id" TEXT, "product_type" TEXT, "start_date" TEXT, "end_date" TEXT, "status" TEXT, "premium_amount" REAL, "created_at" TEXT, FOREIGN KEY ("customer_id") REFERENCES "customers" ("customer_id"));
 INSERT INTO "policies" VALUES('POL-AUTO-2026-000001','CUS-000001','AUTO','2025-12-28','2026-10-26','EXPIRED',730.03,'2026-01-01T09:00:00');
 INSERT INTO "policies" VALUES('POL-PROPERTY-2026-000002','CUS-000001','PROPERTY','2025-01-03','2026-10-28','CANCELLED',1670.0,'2026-01-01T09:00:00');
 INSERT INTO "policies" VALUES('POL-HEALTH-2026-000003','CUS-000002','HEALTH','2025-04-20','2026-05-03','EXPIRED',1557.55,'2026-01-01T09:00:00');
@@ -13118,14 +13037,7 @@ INSERT INTO "policies" VALUES('POL-PROPERTY-2026-001997','CUS-000999','PROPERTY'
 INSERT INTO "policies" VALUES('POL-HEALTH-2026-001998','CUS-000999','HEALTH','2025-11-19','2027-01-23','ACTIVE',596.93,'2026-01-01T09:00:00');
 INSERT INTO "policies" VALUES('POL-TRAVEL-2026-001999','CUS-001000','TRAVEL','2025-09-14','2026-12-04','ACTIVE',1332.51,'2026-01-01T09:00:00');
 INSERT INTO "policies" VALUES('POL-LIABILITY-2026-002000','CUS-001000','LIABILITY','2025-04-26','2026-10-26','EXPIRED',785.11,'2026-01-01T09:00:00');
-CREATE TABLE "reserves" (
-"reserve_id" TEXT,
-  "claim_id" TEXT,
-  "amount" REAL,
-  "reserve_type" TEXT,
-  "created_at" TEXT,
-  "reason" TEXT
-);
+CREATE TABLE "reserves" ("reserve_id" TEXT PRIMARY KEY NOT NULL, "claim_id" TEXT, "amount" REAL, "reserve_type" TEXT, "created_at" TEXT, "reason" TEXT, FOREIGN KEY ("claim_id") REFERENCES "claims" ("claim_id"));
 INSERT INTO "reserves" VALUES('RSV-000001','CLM-2026-000001',1815.88,'INITIAL','2026-10-27T09:10:00','Preliminary reserve estimate');
 INSERT INTO "reserves" VALUES('RSV-000002','CLM-2026-000002',5091.75,'INITIAL','2026-10-27T09:10:00','Preliminary reserve estimate');
 INSERT INTO "reserves" VALUES('RSV-000003','CLM-2026-000003',3.67450000000000054356e+02,'INITIAL','2026-10-27T09:10:00','Preliminary reserve estimate');
@@ -14126,15 +14038,7 @@ INSERT INTO "reserves" VALUES('RSV-000997','CLM-2026-000997',7382.2,'INITIAL','2
 INSERT INTO "reserves" VALUES('RSV-000998','CLM-2026-000998',7554.1,'INITIAL','2026-10-27T09:10:00','Preliminary reserve estimate');
 INSERT INTO "reserves" VALUES('RSV-000999','CLM-2026-000999',2716.08,'INITIAL','2026-10-27T09:10:00','Preliminary reserve estimate');
 INSERT INTO "reserves" VALUES('RSV-001000','CLM-2026-001000',4113.73,'INITIAL','2026-10-27T09:10:00','Preliminary reserve estimate');
-CREATE TABLE "settlements" (
-"settlement_id" TEXT,
-  "claim_id" TEXT,
-  "amount" REAL,
-  "settlement_date" TEXT,
-  "status" TEXT,
-  "payment_reference" TEXT,
-  "created_at" TEXT
-);
+CREATE TABLE "settlements" ("settlement_id" TEXT PRIMARY KEY NOT NULL, "claim_id" TEXT, "amount" REAL, "settlement_date" TEXT, "status" TEXT, "payment_reference" TEXT, "created_at" TEXT, FOREIGN KEY ("claim_id") REFERENCES "claims" ("claim_id"));
 INSERT INTO "settlements" VALUES('SET-CLM-2026-000006-001','CLM-2026-000006',10100.0,'2026-10-27','PAID','PAY-000006','2026-10-27T09:15:00');
 INSERT INTO "settlements" VALUES('SET-CLM-2026-000007-001','CLM-2026-000007',2818.94,'2026-10-27','PAID','PAY-000007-1','2026-10-27T09:15:00');
 INSERT INTO "settlements" VALUES('SET-CLM-2026-000007-002','CLM-2026-000007',2818.94,'2026-10-27','PAID','PAY-000007-2','2026-10-27T09:15:00');

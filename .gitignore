@@ -19,6 +19,7 @@ venv/
 .idea/
 
 # Generated temporary files
+data/insurance_claims.db
 *.tmp
 .DS_Store
 src/data_generator.py.bak
