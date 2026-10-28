@@ -24,9 +24,14 @@ An end-to-end insurance claims assessment workflow built with Python and Flask. 
 
 ```text
 Insurance-Claims-AI/
-├── data/                 # Generated insurance datasets
+├── data/                       # Generated insurance datasets
+│   ├── *.csv                   # Claims, policies, customers, etc.
+│   ├── generation_summary.json
+│   ├── validation_summary.json
+│   └── insurance_claims.sql    # SQL export of the datasets
 ├── docs/
-│   └── data_dictionary.md
+│   ├── data_dictionary.md
+│   └── source_manifest.json
 ├── src/
 │   ├── __init__.py
 │   ├── data_generator.py
