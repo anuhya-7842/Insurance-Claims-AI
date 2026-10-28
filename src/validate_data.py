@@ -101,6 +101,90 @@ def validate_data():
         reserves, "claim_id", claims, "claim_id",
         "Reserve -> Claim"
     )
+        # Validate policy date ordering.
+    policy_start = pd.to_datetime(
+        policies["start_date"], errors="raise"
+    )
+    policy_end = pd.to_datetime(
+        policies["end_date"], errors="raise"
+    )
+
+    assert policy_start.notna().all(), (
+        "Policy start dates contain null values"
+    )
+    assert policy_end.notna().all(), (
+        "Policy end dates contain null values"
+    )
+    assert (policy_start <= policy_end).all(), (
+        "Policy start date must not be after end date"
+    )
+        # Validate incident dates.
+    incident_dates = pd.to_datetime(
+        incidents["incident_date"], errors="raise"
+    )
+
+    assert incident_dates.notna().all(), (
+        "Incident dates contain null values"
+    )
+        # Validate document types and statuses.
+    valid_document_types = {
+        "CLAIM_FORM",
+        "INCIDENT_REPORT",
+        "INVOICE",
+    }
+    valid_document_statuses = {
+        "RECEIVED",
+        "PENDING",
+        "REJECTED",
+    }
+
+    assert documents["document_type"].notna().all(), (
+        "Document types contain null values"
+    )
+    assert documents["document_type"].isin(valid_document_types).all(), (
+        "Invalid document type found"
+    )
+    assert documents["status"].notna().all(), (
+        "Document statuses contain null values"
+    )
+    assert documents["status"].isin(valid_document_statuses).all(), (
+        "Invalid document status found"
+    )
+        # Validate claim lifecycle status.
+    valid_claim_statuses = {"SUBMITTED"}
+
+    assert claims["status"].notna().all(), (
+        "Claim statuses contain null values"
+    )
+    assert claims["status"].isin(valid_claim_statuses).all(), (
+        "Invalid claim lifecycle status found"
+    )
+        # Validate assessment records.
+    valid_eligibility_values = {
+        "ELIGIBLE",
+        "INELIGIBLE",
+        "NEEDS_REVIEW",
+        "NEEDS_DOCUMENTS",
+    }
+
+    assert assessments["eligibility"].notna().all(), (
+        "Assessment eligibility contains null values"
+    )
+    assert assessments["eligibility"].isin(valid_eligibility_values).all(), (
+        "Invalid assessment eligibility found"
+    )
+    assert assessments["decision_reason"].notna().all(), (
+        "Assessment decision reasons contain null values"
+    )
+    assert assessments["decision_reason"].astype(str).str.strip().ne("").all(), (
+        "Assessment decision reasons contain empty values"
+    )
+    assert assessments["rules_version"].notna().all(), (
+        "Assessment rules versions contain null values"
+    )
+    assert assessments["rules_version"].astype(str).str.strip().ne("").all(), (
+        "Assessment rules versions contain empty values"
+    )
 
     # Required volume checks.
     assert len(policies) == 2000, "Expected 2,000 policies"
@@ -164,6 +248,18 @@ def validate_data():
         pd.to_numeric(settlements["amount"], errors="coerce").notna().all()
         and (pd.to_numeric(settlements["amount"], errors="coerce") >= 0).all()
     ), "Settlement amounts must be valid non-negative numbers"
+        # Detect duplicate paid settlements without rejecting intentional test data.
+    paid_settlements = settlements[
+        settlements["status"] == "PAID"
+    ]
+    duplicate_paid_claims = int(
+        paid_settlements["claim_id"].duplicated().sum()
+    )
+
+    print(
+        "Claims with duplicate paid settlements: "
+        f"{duplicate_paid_claims}"
+    )
 
 
    
