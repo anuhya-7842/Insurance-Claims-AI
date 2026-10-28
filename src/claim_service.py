@@ -1,12 +1,11 @@
 import csv
 from datetime import datetime
-from unittest import result
 import pandas as pd
-
+from pathlib import Path
 from src.claims_engine import assess_claim
 
 
-DATA_DIR = __import__("pathlib").Path(__file__).resolve().parent.parent / "data"
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
 def log_claim_event(claim_id, event_type, details):
     events_path = DATA_DIR / "claim_events.csv"
