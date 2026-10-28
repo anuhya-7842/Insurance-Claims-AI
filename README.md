@@ -91,8 +91,10 @@ The Flask application runs locally at `http://127.0.0.1:5000`.
 |---|---|---|
 | GET | `/` | Returns application information and available endpoints |
 | GET | `/health` | Checks application health |
+| GET | `/api/claims/review` | Lists claims requiring review or missing documents |
 | GET | `/api/claims/<claim_id>/assess` | Assesses a specific insurance claim |
 | POST | `/api/claims/assess` | Assesses a claim using a JSON request body |
+| GET | `/api/claims/<claim_id>/settlement-route` | Checks whether a claim is ready for settlement review and blocks unsafe routing cases |
 
 ### Example: Assess a Claim
 
@@ -139,6 +141,24 @@ python -m pytest -v
 ```
 
 The test suite covers eligible claims, policy validity, missing documents, coverage limits, claim type mismatches, duplicate claims, duplicate payments, and settlement-limit violations.
+
+## Data Reproducibility
+
+The synthetic data generator uses a fixed random seed (`20261022`) to produce repeatable datasets. Using the same seed and generation settings produces identical output files.
+
+Generate the datasets:
+
+```bash
+python -m src.data_generator
+```
+
+Validate the generated data:
+
+```bash
+python -m src.validate_data
+```
+
+The validation process checks dataset integrity and business constraints before the data is used by the claims workflow. The project also includes automated tests for claims assessment and settlement routing.
 
 ## Data Documentation
 
