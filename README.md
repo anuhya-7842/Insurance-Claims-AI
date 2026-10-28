@@ -127,13 +127,14 @@ Example response:
 The claims engine checks:
 
 1. Whether the incident occurred within the policy's validity period.
-2. Whether the policy is cancelled.
+2. Whether the policy was cancelled on or before the incident date.
 3. Whether the claim type matches the policy product.
 4. Whether mandatory documents are available.
 5. Whether the claimed amount exceeds the coverage limit.
 6. Whether another claim exists for the same policy and incident.
-7. Whether multiple paid settlements exist for the same claim.
-8. Whether paid settlements exceed the coverage limit.
+7. Whether the same incident is associated with claims under different policies.
+8. Whether multiple paid settlements exist for the same claim.
+9. Whether paid settlements exceed the coverage limit.
 
 Claims requiring further investigation are marked `NEEDS_REVIEW`.
 
@@ -145,7 +146,7 @@ Execute the automated test suite:
 python -m pytest -v
 ```
 
-The test suite covers eligible claims, policy validity, missing documents, coverage limits, claim type mismatches, duplicate claims, duplicate payments, and settlement-limit violations.
+The test suite covers eligible claims, policy validity and cancellation dates, missing mandatory documents, coverage limits, claim type mismatches, duplicate claims and incidents, duplicate paid settlements, settlement-limit violations, document requests, and settlement routing safeguards.
 
 ## Data Reproducibility
 
