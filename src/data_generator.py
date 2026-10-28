@@ -1,6 +1,7 @@
 
 import json
 import random
+import sqlite3
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
@@ -384,6 +385,23 @@ def generate_data(
             OUTPUT_DIR / f"{name}.csv",
             index=False,
         )
+
+    # Export all datasets to a SQLite-compatible SQL seed file.
+    sql_path = OUTPUT_DIR / "insurance_claims.sql"
+    database_path = OUTPUT_DIR / "insurance_claims.db"
+
+    with sqlite3.connect(database_path) as connection:
+        for name, rows in datasets.items():
+            pd.DataFrame(rows).to_sql(
+                name,
+                connection,
+                if_exists="replace",
+                index=False,
+            )
+
+        with sql_path.open("w", encoding="utf-8") as sql_file:
+            for line in connection.iterdump():
+                sql_file.write(line + "\n")
 
     summary = {
         name: len(rows)

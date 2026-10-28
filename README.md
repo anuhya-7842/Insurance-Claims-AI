@@ -144,21 +144,36 @@ The test suite covers eligible claims, policy validity, missing documents, cover
 
 ## Data Reproducibility
 
-The synthetic data generator uses a fixed random seed (`20261022`) to produce repeatable datasets. Using the same seed and generation settings produces identical output files.
+The synthetic data generator uses a fixed random seed (`20261022`) to produce repeatable datasets. The generator supports configurable policy and claim counts.
 
-Generate the datasets:
+### Generate the datasets
 
 ```bash
 python -m src.data_generator
 ```
 
-Validate the generated data:
+The generator exports the datasets in the following formats:
+
+- **CSV:** Individual files for all 13 datasets.
+- **JSON:** Generation and data validation summaries.
+- **SQL:** `data/insurance_claims.sql`, containing SQL statements to recreate the exported tables and data.
+- **SQLite:** `data/insurance_claims.db`, a database containing all 13 datasets.
+
+### Validate the generated data
 
 ```bash
 python -m src.validate_data
 ```
 
-The validation process checks dataset integrity and business constraints before the data is used by the claims workflow. The project also includes automated tests for claims assessment and settlement routing.
+The validation process checks dataset integrity and business constraints before the data is used by the claims workflow. The project also includes automated tests for claims assessment, duplicate-payment detection, missing-document handling, and settlement routing.
+
+### Verify the SQLite database
+
+The SQLite database can be inspected using Python's built-in `sqlite3` module. The generated database contains 13 tables, including claims, policies, coverages, documents, assessments, reserves, settlements, claim events, and ground-truth anomaly labels.
+
+The current baseline contains 2,000 policies and 1,000 claims.
+
+**Reproducibility note:** Run the generator with the same seed and configuration to reproduce the synthetic datasets. Verify reproducibility by comparing output checksums across separate runs. Database file checksums may vary even when the underlying data is equivalent.
 
 ## Data Documentation
 
