@@ -31,6 +31,7 @@ Insurance-Claims-AI/
 │   ├── insurance_claims.db
 │   └── insurance_claims.sql    # SQL export of the datasets
 ├── docs/
+│   ├── ai_usage_and_prompt_history.md
 │   ├── data_dictionary.md
 │   └── source_manifest.json
 ├── src/
@@ -139,6 +140,22 @@ The claims engine checks:
 
 Claims requiring further investigation are marked `NEEDS_REVIEW`.
 
+## Design Decisions and Trade-Offs
+
+- **Deterministic claim assessment:** Python business rules are used instead of LLM-based claim decisions so that the implemented checks are explicit, repeatable, and easier to inspect.
+- **Reproducible synthetic data:** A fixed random seed (`20261022`) makes dataset generation repeatable with the same configuration.
+- **Separate ground truth:** Ground-truth records are maintained separately from assessment outputs so validation can compare expected scenarios with observed behavior.
+- **Review rather than automatic approval:** Claims with missing documents, conflicting records, or suspicious settlement patterns can be flagged for further review instead of being treated as straightforward approvals.
+- **CSV, SQL, and SQLite exports:** Multiple formats make the generated data easier to inspect, validate, and reuse, at the cost of maintaining consistent outputs across formats.
+
+### Limitations
+
+- The data is synthetic and does not demonstrate performance on real insurance claims.
+- The rules cover the scenarios implemented in this project, not every possible insurance policy or claim.
+- Duplicate-payment and anomaly checks are rule-based safeguards, not a guarantee that fraud will be detected.
+- Passing the current tests confirms the covered cases, not complete correctness in every situation.
+- The application does not currently use an LLM to make claim decisions.
+
 ## Run Tests
 
 Execute the automated test suite:
@@ -185,6 +202,31 @@ The current baseline contains 2,000 policies and 1,000 claims.
 ## Data Documentation
 
 Refer to [`docs/data_dictionary.md`](docs/data_dictionary.md) for descriptions of the generated datasets, their fields, and relationships.
+
+## AI Usage and Transparency
+
+AI tools were used as development assistants to help interpret requirements, troubleshoot implementation issues, review edge cases, and improve project documentation.
+
+### Where AI Helped
+- Breaking down the challenge requirements into implementation tasks.
+- Investigating bugs and reviewing edge cases in claim assessment and generated data.
+- Improving test coverage and validation checks.
+- Drafting and reviewing documentation.
+
+### What Was Personally Validated
+- Ran the automated test suite and confirmed all 14 tests passed.
+- Ran data validation and confirmed it passed.
+- Regenerated datasets and compared SHA-256 checksums to verify reproducibility.
+- Checked SQLite table creation and foreign-key integrity.
+- Reviewed implementation changes and corrected issues identified during testing.
+
+### LLMs in the Application
+The current application uses deterministic Python business rules for claim eligibility and settlement-routing safeguards. It does not use an LLM to make claim decisions. This keeps decisions inspectable and reproducible for the implemented scenarios.
+
+### Prompt History
+See [`docs/ai_usage_and_prompt_history.md`](docs/ai_usage_and_prompt_history.md) for a disclosure of AI assistance, representative prompt summaries, validation steps, and limitations.
+
+**Disclosure:** The prompt-history document contains representative summaries rather than a complete verbatim transcript of all AI interactions.
 
 ## Future Improvements
 
