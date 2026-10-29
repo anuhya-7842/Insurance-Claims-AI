@@ -100,10 +100,10 @@ Required fields cannot be null.
 - settlement_id: string, PK, required, unique.
 - claim_id: string, FK → Claim, required.
 - amount: decimal, USD, non-negative.
+- settlement_date: date, optional until settled.
 - status: enum (PENDING, APPROVED, PAID, REJECTED), required.
-- settled_at: datetime, optional until settled.
-- transaction_reference: string, optional; unique when present.
-- reason: string, required.
+- payment_reference: string, optional; identifies the payment transaction.
+- created_at: datetime, required.
 
 ## Relationships and Cardinality
 
