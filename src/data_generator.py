@@ -172,7 +172,7 @@ def generate_data(
         if i == 2:
             policy["status"] = "CANCELLED"
             incident_date = min(end, today)
-            cancellation_date = incident_date - timedelta(days=1)
+            cancellation_date = date(2026, 3, 31)
 
             if cancellation_date < start:
                 cancellation_date = start
@@ -187,9 +187,10 @@ def generate_data(
             rng.uniform(250, coverage["limit_amount"] * 0.95), 2
         )
 
-        # Claim 3: duplicate incident.
+        # Claim 3: duplicate incident within the policy period.
         if i == 3:
             incident_id = make_id("INC-", 2)
+            incident_date = date(2026, 4, 1)
             issue_type = "DUPLICATE_INCIDENT"
 
         # Claim 4: amount exceeds the policy limit.
@@ -209,10 +210,18 @@ def generate_data(
             ),
         }
 
-        if not any(
-            row["incident_id"] == incident_id for row in incidents
-        ):
+        existing_incident = next(
+            (
+                row for row in incidents
+                if row["incident_id"] == incident_id
+            ),
+            None,
+        )
+
+        if existing_incident is None:
             incidents.append(incident)
+        elif i == 3:
+            existing_incident["incident_date"] = incident_date.isoformat()
         # Claim 8: duplicate claim scenario.
         if i == 8:
             issue_type = "DUPLICATE_CLAIM"
