@@ -300,7 +300,7 @@ def generate_data(
         )
 
         assessments.append({
-            "assessment_id": make_id("ASM-", i),
+            "assessment_id": f"ASN-{claim_id}-001",
             "claim_id": claim_id,
             "adjuster_id": adjuster_id,
             "eligibility": "NEEDS_REVIEW",
