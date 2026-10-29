@@ -28,6 +28,7 @@ Insurance-Claims-AI/
 │   ├── *.csv                   # Claims, policies, customers, etc.
 │   ├── generation_summary.json
 │   ├── validation_summary.json
+│   ├── insurance_claims.db
 │   └── insurance_claims.sql    # SQL export of the datasets
 ├── docs/
 │   ├── data_dictionary.md
