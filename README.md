@@ -32,6 +32,7 @@ Insurance-Claims-AI/
 │   └── insurance_claims.sql    # SQL export of the datasets
 ├── docs/
 │   ├── ai_usage_and_prompt_history.md
+│   ├── prompt_history.md
 │   ├── data_dictionary.md
 │   └── source_manifest.json
 ├── src/
