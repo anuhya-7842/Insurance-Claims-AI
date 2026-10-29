@@ -79,7 +79,7 @@ Required fields cannot be null.
 - max_open_claims: integer, positive.
 
 ## 9. Assessment
-- assessment_id: string, PK, required, unique.
+- assessment_id: string, PK, required, unique; format `ASN-<claim_id>-001` (sequential suffix for multiple assessments per claim).
 - claim_id: string, FK → Claim, required.
 - adjuster_id: string, FK → Adjuster, optional until assigned.
 - eligibility: enum (ELIGIBLE, INELIGIBLE, NEEDS_REVIEW, NEEDS_DOCUMENTS), required.
@@ -97,7 +97,7 @@ Required fields cannot be null.
 - reason: string, required.
 
 ## 11. Settlement
-- settlement_id: string, PK, required, unique.
+- settlement_id: string, PK, required, unique; format `SET-<claim_id>-001` (sequential suffix for multiple settlements per claim).
 - claim_id: string, FK → Claim, required.
 - amount: decimal, USD, non-negative.
 - settlement_date: date, optional until settled.
