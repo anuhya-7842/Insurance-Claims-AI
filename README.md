@@ -112,7 +112,7 @@ Example response:
 ```json
 {
   "claim_id": "CLM-2026-000001",
-  "eligibility": "NEEDS_REVIEW",
+  "eligibility": "INELIGIBLE",
   "recommended_amount": 0,
   "preliminary_reserve": 0,
   "decision_reason": "INCIDENT_BEFORE_POLICY_START",
