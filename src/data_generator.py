@@ -294,9 +294,12 @@ def generate_data(
         adjuster_id = make_id("ADJ-", ((i - 1) % 20) + 1)
 
         # Preliminary reserve cannot exceed the coverage limit.
-        reserve_amount = min(
-            max(0, claimed_amount - coverage["deductible_amount"]),
-            coverage["limit_amount"],
+        reserve_amount = round(
+            min(
+                max(0, claimed_amount - coverage["deductible_amount"]),
+                coverage["limit_amount"],
+            ),
+            2,
         )
 
         assessments.append({
