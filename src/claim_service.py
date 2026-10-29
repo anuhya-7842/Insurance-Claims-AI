@@ -8,7 +8,7 @@ from src.claims_engine import assess_claim
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
 def log_claim_event(claim_id, event_type, details):
-    events_path = DATA_DIR / "claim_events.csv"
+    events_path = DATA_DIR / "runtime_claim_events.csv"
 
     if not events_path.exists():
         return
